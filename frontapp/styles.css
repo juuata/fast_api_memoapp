@@ -69,6 +69,13 @@ h2 {
   resize: vertical;
 }
 
+.char-count {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+  margin-top: 4px;
+}
+
 .form-buttons {
   display: flex;
   gap: 10px;
@@ -114,6 +121,21 @@ td {
   font-size: 14px;
   border-bottom: 1px solid #eee;
   vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* タイトル列は折り返して表示する */
+td:nth-child(1) {
+  white-space: normal;
+  word-break: break-all;
+  max-width: 20px;
+}
+
+/* 説明列は1行20文字相当で折り返して表示する */
+td:nth-child(2) {
+  white-space: normal;
+  word-break: break-all;
+  max-width: 10em;
 }
 
 tr:last-child td {
@@ -124,6 +146,53 @@ tr:last-child td {
   text-align: center;
   color: #999;
   padding: 24px;
+}
+
+/* ページネーション */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #555;
+}
+
+.pagination .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* トースト通知 */
+.toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.toast-success {
+  background-color: #4caf50;
+}
+
+.toast-error {
+  background-color: #e24a4a;
 }
 
 /* ボタン */

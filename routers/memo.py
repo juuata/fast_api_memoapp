@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas.memo import InsertAndUpdateMemoSchema, MemoSchema, ResponseSchema
+from schemas.memo import InsertAndUpdateMemoSchema, MemoSchema, PaginatedMemoSchema, ResponseSchema
 import cruds.memo as memo_crud
 import db
 
@@ -20,11 +20,16 @@ async def create_memo(memo: InsertAndUpdateMemoSchema, db: AsyncSession = Depend
         raise HTTPException(status_code=500, detail="メモの登録に失敗しました")
 
 
-# 全メモを一覧取得するエンドポイント
-@router.get("", response_model=list[MemoSchema])
-async def get_memos(order: str = Query("desc", pattern="^(asc|desc)$"), db: AsyncSession = Depends(db.get_db)):
+# 全メモを一覧取得するエンドポイント（ページネーション対応）
+@router.get("", response_model=PaginatedMemoSchema)
+async def get_memos(
+    order: str = Query("desc", pattern="^(asc|desc)$"),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(10, ge=1, le=100),
+    db: AsyncSession = Depends(db.get_db),
+):
     try:
-        result = await memo_crud.get_memos(db, order)
+        result = await memo_crud.get_memos(db, order, page, per_page)
         print("全件取得に成功しました")
         return result
     except Exception as e:

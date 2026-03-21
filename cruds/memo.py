@@ -1,11 +1,13 @@
 from datetime import datetime
 
 from fastapi import HTTPException
-from sqlalchemy import asc, desc, select
+import math
+
+from sqlalchemy import asc, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.memo import Memo
-from schemas.memo import InsertAndUpdateMemoSchema, MemoSchema, ResponseSchema
+from schemas.memo import InsertAndUpdateMemoSchema, MemoSchema, PaginatedMemoSchema, ResponseSchema
 
 
 # ORMモデルをレスポンス用スキーマに変換するヘルパー関数
@@ -45,17 +47,27 @@ async def create_memo(db: AsyncSession, memo: InsertAndUpdateMemoSchema) -> Memo
     return _to_schema(new_memo)
 
 
-# 全件取得
-async def get_memos(db: AsyncSession, order: str = "desc") -> list[MemoSchema]:
-    # memosテーブルの全レコードを取得するクエリを実行する
+# ページネーション付き全件取得
+async def get_memos(db: AsyncSession, order: str = "desc", page: int = 1, per_page: int = 10) -> PaginatedMemoSchema:
     print("全件取得：開始")
     sort_order = asc(Memo.created_at) if order == "asc" else desc(Memo.created_at)
-    result = await db.execute(select(Memo).order_by(sort_order))
+
+    # 総件数を取得する
+    total = (await db.execute(select(func.count()).select_from(Memo))).scalar()
+
+    # offsetとlimitで対象ページのレコードを取得する
+    offset = (page - 1) * per_page
+    result = await db.execute(select(Memo).order_by(sort_order).offset(offset).limit(per_page))
     memos = result.scalars().all()
     print("全件取得：完了")
 
-    # ORMモデルのリストをレスポンス用スキーマのリストに変換して返す
-    return [_to_schema(memo) for memo in memos]
+    return PaginatedMemoSchema(
+        items=[_to_schema(memo) for memo in memos],
+        total=total,
+        page=page,
+        per_page=per_page,
+        total_pages=math.ceil(total / per_page) if total > 0 else 1,
+    )
 
 
 # IDで特定のメモを1件取得
