@@ -14,6 +14,8 @@ def _to_schema(memo: Memo) -> MemoSchema:
         memo_id=memo.memo_id,
         title=memo.title,
         description=memo.description or "",
+        created_at=memo.created_at,
+        updated_at=memo.updated_at,
     )
 
 

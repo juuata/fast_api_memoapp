@@ -194,6 +194,8 @@ export default function App() {
             <tr>
               <th>タイトル</th>
               <th>説明</th>
+              <th>作成日時</th>
+              <th>更新日時</th>
               <th>編集</th>
               <th>削除</th>
             </tr>
@@ -201,13 +203,15 @@ export default function App() {
           <tbody>
             {memos.length === 0 ? (
               <tr>
-                <td colSpan="4" className="empty-message">メモがありません</td>
+                <td colSpan="6" className="empty-message">メモがありません</td>
               </tr>
             ) : (
               memos.map((memo) => (
                 <tr key={memo.memo_id}>
                   <td>{memo.title}</td>
                   <td>{memo.description}</td>
+                  <td>{new Date(memo.created_at).toLocaleString("ja-JP")}</td>
+                  <td>{memo.updated_at ? new Date(memo.updated_at).toLocaleString("ja-JP") : "ー"}</td>
                   <td>
                     <button className="btn btn-edit" onClick={() => editMemo(memo.memo_id)}>編集</button>
                   </td>

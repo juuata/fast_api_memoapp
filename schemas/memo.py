@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 # 登録・更新で使用するスキーマ
@@ -8,6 +10,8 @@ class InsertAndUpdateMemoSchema(BaseModel):
 
 class MemoSchema(InsertAndUpdateMemoSchema):
     memo_id: int = Field(..., description="メモを一意に識別するID番号。データベースで自動的に割り当てられます", examples=[123])
+    created_at: datetime = Field(..., description="メモの作成日時")
+    updated_at: datetime | None = Field(None, description="メモの更新日時。未更新の場合はNULL")
 
 
 class ResponseSchema(BaseModel):
