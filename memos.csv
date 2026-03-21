@@ -1,0 +1,6 @@
+フィールド名,データ型,主キー(PK),必須(NOT NULL),自動インクリメント,デフォルト値,説明
+memo_id,integer,はい,はい,はい,なし,メモの一意識別子
+title,String(50),いいえ,はい,いいえ,なし,メモのタイトル
+description,String(255),いいえ,いいえ,いいえ,なし,メモの詳細説明
+created_at,DateTime,いいえ,いいえ,いいえ,datetime.now(),メモ作成日時
+updated_at,DateTime,いいえ,いいえ,いいえ,なし,メモの更新日時

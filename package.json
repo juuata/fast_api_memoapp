@@ -1,0 +1,7 @@
+{
+  "name": "fast_api_memoapp",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm run dev --prefix frontapp"
+  }
+}

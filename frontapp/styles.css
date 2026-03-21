@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #222;
+}
+
+h2 {
+  font-size: 18px;
+  color: #444;
+}
+
+/* フォームセクション */
+.form-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #4a90e2;
+}
+
+.form-group textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* メモ一覧セクション */
+.list-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #f0f0f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 2px solid #ddd;
+}
+
+td {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  padding: 24px;
+}
+
+/* ボタン */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn-primary {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #888;
+  color: #fff;
+}
+
+.btn-edit {
+  background-color: #f0a500;
+  color: #fff;
+}
+
+.btn-delete {
+  background-color: #e24a4a;
+  color: #fff;
+}
