@@ -12,6 +12,7 @@ export default function App() {
   const [description, setDescription] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [memos, setMemos] = useState([]);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   // メッセージをアラートで表示する関数
   const displayMessage = (message) => {
@@ -112,8 +113,8 @@ export default function App() {
   };
 
   // サーバーからメモ一覧を取得し、テーブルに表示する非同期関数
-  const fetchAndDisplayMemos = async () => {
-    const response = await fetch(apiUrl);
+  const fetchAndDisplayMemos = async (order = sortOrder) => {
+    const response = await fetch(`${apiUrl}?order=${order}`);
 
     // 失敗した場合、失敗した内容のメッセージを表示する
     if (!response.ok) {
@@ -124,6 +125,12 @@ export default function App() {
     // 取得したメモ一覧をstateに保存し、テーブルを再レンダリングする
     const data = await response.json();
     setMemos(data);
+  };
+
+  const toggleSortOrder = () => {
+    const newOrder = sortOrder === "desc" ? "asc" : "desc";
+    setSortOrder(newOrder);
+    fetchAndDisplayMemos(newOrder);
   };
 
   // ページロード時にメモ一覧を取得する
@@ -187,7 +194,12 @@ export default function App() {
       <section className="list-section">
         <div className="list-header">
           <h2>メモ一覧</h2>
-          <button className="btn btn-secondary" onClick={fetchAndDisplayMemos}>一覧を更新</button>
+          <div className="list-header-actions">
+            <button className="btn btn-secondary" onClick={toggleSortOrder}>
+              作成日時：{sortOrder === "desc" ? "新しい順" : "古い順"}
+            </button>
+            <button className="btn btn-secondary" onClick={() => fetchAndDisplayMemos()}>一覧を更新</button>
+          </div>
         </div>
         <table>
           <thead>

@@ -90,6 +90,11 @@ h2 {
   margin-bottom: 16px;
 }
 
+.list-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

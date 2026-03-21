@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.memo import InsertAndUpdateMemoSchema, MemoSchema, ResponseSchema
 import cruds.memo as memo_crud
@@ -22,9 +22,9 @@ async def create_memo(memo: InsertAndUpdateMemoSchema, db: AsyncSession = Depend
 
 # 全メモを一覧取得するエンドポイント
 @router.get("", response_model=list[MemoSchema])
-async def get_memos(db: AsyncSession = Depends(db.get_db)):
+async def get_memos(order: str = Query("desc", pattern="^(asc|desc)$"), db: AsyncSession = Depends(db.get_db)):
     try:
-        result = await memo_crud.get_memos(db)
+        result = await memo_crud.get_memos(db, order)
         print("全件取得に成功しました")
         return result
     except Exception as e:

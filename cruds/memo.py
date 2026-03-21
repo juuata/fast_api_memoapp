@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.memo import Memo
@@ -46,10 +46,11 @@ async def create_memo(db: AsyncSession, memo: InsertAndUpdateMemoSchema) -> Memo
 
 
 # 全件取得
-async def get_memos(db: AsyncSession) -> list[MemoSchema]:
+async def get_memos(db: AsyncSession, order: str = "desc") -> list[MemoSchema]:
     # memosテーブルの全レコードを取得するクエリを実行する
     print("全件取得：開始")
-    result = await db.execute(select(Memo))
+    sort_order = asc(Memo.created_at) if order == "asc" else desc(Memo.created_at)
+    result = await db.execute(select(Memo).order_by(sort_order))
     memos = result.scalars().all()
     print("全件取得：完了")
 
