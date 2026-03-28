@@ -1,17 +1,20 @@
+import os
+
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from models.memo import Base
 
-# 非同期SQLite接続用のデータベースURL
-# aiosqliteドライバを使用してSQLiteに非同期アクセスする
-DATABASE_URL = "sqlite+aiosqlite:///./memos.db"
+# .envファイルから環境変数を読み込む
+load_dotenv()
+
+# 環境変数からDB接続URLを取得する
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # 非同期エンジンの作成
-# echo=Trueにすると実行されるSQLがコンソールに出力される（デバッグ用）
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 # 非同期セッションファクトリの作成
-# expire_on_commit=Falseにすることでコミット後もオブジェクトの属性にアクセスできる
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,
     class_=AsyncSession,
@@ -20,14 +23,12 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 # テーブルを非同期で作成する関数
-# アプリ起動時に呼び出し、未作成のテーブルをデータベースに作成する
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
 # FastAPIの依存性注入で使用するDBセッション取得関数
-# yieldを使うことでリクエスト終了時に自動でセッションをクローズする
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session

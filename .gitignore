@@ -1,0 +1,13 @@
+# 環境変数（パスワード等の秘密情報を含むためGitに含めない）
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# SQLite（PostgreSQLに移行したため不要）
+*.db
+
+# Node.js
+node_modules/
