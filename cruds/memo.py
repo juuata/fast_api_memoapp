@@ -1,8 +1,7 @@
+import math
 from datetime import datetime
 
 from fastapi import HTTPException
-import math
-
 from sqlalchemy import asc, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,8 +9,8 @@ from models.memo import Memo
 from schemas.memo import InsertAndUpdateMemoSchema, MemoSchema, PaginatedMemoSchema, ResponseSchema
 
 
-# ORMモデルをレスポンス用スキーマに変換するヘルパー関数
 def _to_schema(memo: Memo) -> MemoSchema:
+    """ORMモデルをレスポンス用スキーマに変換するヘルパー関数"""
     return MemoSchema(
         memo_id=memo.memo_id,
         title=memo.title,
@@ -21,45 +20,43 @@ def _to_schema(memo: Memo) -> MemoSchema:
     )
 
 
-# memo_idでレコードを取得し、存在しない場合は404エラーを返すヘルパー関数
-async def _get_memo_or_404(db: AsyncSession, memo_id: int) -> Memo:
-    result = await db.execute(select(Memo).where(Memo.memo_id == memo_id))
+async def _get_memo_or_404(session: AsyncSession, memo_id: int, user_id: int) -> Memo:
+    """memo_idとuser_idで対象メモを取得する。
+    存在しない場合と他ユーザーのメモの場合は同じ404を返す
+    （他ユーザーのメモIDが存在するかどうかを外部に教えないため）"""
+    result = await session.execute(
+        select(Memo).where(Memo.memo_id == memo_id, Memo.user_id == user_id)
+    )
     memo = result.scalars().first()
     if memo is None:
         raise HTTPException(status_code=404, detail=f"memo_id={memo_id} のメモが見つかりません")
     return memo
 
 
-# 新規登録
-async def create_memo(db: AsyncSession, memo: InsertAndUpdateMemoSchema) -> MemoSchema:
-    # スキーマのデータをもとに新しいMemoモデルのインスタンスを生成する
-    new_memo = Memo(title=memo.title, description=memo.description)
-
-    # セッションに追加してデータベースに保存する
-    print("新規登録：開始")
-    db.add(new_memo)
-    await db.commit()
-
-    # コミット後にDBが自動採番したmemo_idなどを取得するためリフレッシュする
-    await db.refresh(new_memo)
-    print("データ追加：完了")
-
+async def create_memo(session: AsyncSession, memo: InsertAndUpdateMemoSchema, user_id: int) -> MemoSchema:
+    """新規メモを登録する。user_idを付与して所有者を紐付ける"""
+    new_memo = Memo(title=memo.title, description=memo.description, user_id=user_id)
+    session.add(new_memo)
+    await session.commit()
+    await session.refresh(new_memo)
     return _to_schema(new_memo)
 
 
-# ページネーション付き全件取得
-async def get_memos(db: AsyncSession, order: str = "desc", page: int = 1, per_page: int = 10) -> PaginatedMemoSchema:
-    print("全件取得：開始")
+async def get_memos(session: AsyncSession, user_id: int, order: str = "desc", page: int = 1, per_page: int = 10) -> PaginatedMemoSchema:
+    """ログイン中のユーザーのメモのみをページネーション付きで取得する"""
     sort_order = asc(Memo.created_at) if order == "asc" else desc(Memo.created_at)
 
-    # 総件数を取得する
-    total = (await db.execute(select(func.count()).select_from(Memo))).scalar()
+    # 自分のメモの総件数を取得する
+    total = (await session.execute(
+        select(func.count()).select_from(Memo).where(Memo.user_id == user_id)
+    )).scalar()
 
-    # offsetとlimitで対象ページのレコードを取得する
+    # 自分のメモだけを対象ページ分取得する
     offset = (page - 1) * per_page
-    result = await db.execute(select(Memo).order_by(sort_order).offset(offset).limit(per_page))
+    result = await session.execute(
+        select(Memo).where(Memo.user_id == user_id).order_by(sort_order).offset(offset).limit(per_page)
+    )
     memos = result.scalars().all()
-    print("全件取得：完了")
 
     return PaginatedMemoSchema(
         items=[_to_schema(memo) for memo in memos],
@@ -70,40 +67,26 @@ async def get_memos(db: AsyncSession, order: str = "desc", page: int = 1, per_pa
     )
 
 
-# IDで特定のメモを1件取得
-async def get_memo_by_id(db: AsyncSession, memo_id: int) -> MemoSchema:
-    print("1件取得：開始")
-    memo = await _get_memo_or_404(db, memo_id)
-    print("データ取得完了")
+async def get_memo_by_id(session: AsyncSession, memo_id: int, user_id: int) -> MemoSchema:
+    """IDで自分のメモを1件取得する"""
+    memo = await _get_memo_or_404(session, memo_id, user_id)
     return _to_schema(memo)
 
 
-# メモを更新
-async def update_memo(db: AsyncSession, memo_id: int, memo: InsertAndUpdateMemoSchema) -> MemoSchema:
-    print("データ更新：開始")
-    existing_memo = await _get_memo_or_404(db, memo_id)
-
-    # リクエストの内容でフィールドを上書きし、更新日時をセットする
+async def update_memo(session: AsyncSession, memo_id: int, memo: InsertAndUpdateMemoSchema, user_id: int) -> MemoSchema:
+    """自分のメモを更新する"""
+    existing_memo = await _get_memo_or_404(session, memo_id, user_id)
     existing_memo.title = memo.title
     existing_memo.description = memo.description
     existing_memo.updated_at = datetime.now()
-
-    # 変更をデータベースにコミットしてリフレッシュする
-    await db.commit()
-    await db.refresh(existing_memo)
-    print("データ更新完了")
-
+    await session.commit()
+    await session.refresh(existing_memo)
     return _to_schema(existing_memo)
 
 
-# メモを削除
-async def delete_memo(db: AsyncSession, memo_id: int) -> ResponseSchema:
-    print("データ削除：開始")
-    memo = await _get_memo_or_404(db, memo_id)
-
-    # レコードをデータベースから削除してコミットする
-    await db.delete(memo)
-    await db.commit()
-    print("データ削除完了")
-
+async def delete_memo(session: AsyncSession, memo_id: int, user_id: int) -> ResponseSchema:
+    """自分のメモを削除する"""
+    memo = await _get_memo_or_404(session, memo_id, user_id)
+    await session.delete(memo)
+    await session.commit()
     return ResponseSchema(message=f"memo_id={memo_id} のメモを削除しました")

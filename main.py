@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from db import init_db
-from routers import memo
+from routers import auth, memo
 
 
 # アプリ起動時にDBを初期化するライフスパンイベント
@@ -41,4 +41,5 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # メモ管理ルーターを登録する
+app.include_router(auth.router)
 app.include_router(memo.router)

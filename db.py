@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from models.memo import Base
+import models.user  # noqa: F401 — usersテーブルをBase.metadataに登録するためのインポート
 
 # .envファイルから環境変数を読み込む
 load_dotenv()
