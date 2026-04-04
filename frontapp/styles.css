@@ -5,9 +5,9 @@
 }
 
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+  font-family: Georgia, "Times New Roman", "游明朝", YuMincho, serif;
+  background-color: #fdf6e3;
+  color: #3e2723;
 }
 
 .container {
@@ -19,21 +19,24 @@ body {
 h1 {
   font-size: 28px;
   margin-bottom: 30px;
-  color: #222;
+  color: #3e2723;
+  letter-spacing: 0.05em;
 }
 
 h2 {
   font-size: 18px;
-  color: #444;
+  color: #5c4033;
+  letter-spacing: 0.03em;
 }
 
 /* フォームセクション */
 .form-section {
-  background: #fff;
-  border-radius: 8px;
+  background: #fffef7;
+  border-radius: 2px;
   padding: 24px;
   margin-bottom: 30px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 1px dashed #c8a97e;
+  box-shadow: 2px 2px 6px rgba(62, 39, 35, 0.08);
 }
 
 .form-group {
@@ -46,22 +49,28 @@ h2 {
   font-size: 14px;
   font-weight: bold;
   margin-bottom: 6px;
-  color: #555;
+  color: #5c4033;
+  letter-spacing: 0.04em;
 }
 
 .form-group input,
 .form-group textarea {
   padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: none;
+  border-bottom: 1px dashed #c8a97e;
+  border-radius: 0;
   font-size: 14px;
+  font-family: Georgia, "Times New Roman", "游明朝", YuMincho, serif;
   outline: none;
+  background: transparent;
+  color: #3e2723;
   transition: border-color 0.2s;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: #4a90e2;
+  border-bottom-color: #795548;
+  background: rgba(255, 248, 220, 0.3);
 }
 
 .form-group textarea {
@@ -71,9 +80,10 @@ h2 {
 
 .char-count {
   font-size: 12px;
-  color: #999;
+  color: #a1887f;
   text-align: right;
   margin-top: 4px;
+  font-style: italic;
 }
 
 .form-buttons {
@@ -84,10 +94,11 @@ h2 {
 
 /* メモ一覧セクション */
 .list-section {
-  background: #fff;
-  border-radius: 8px;
+  background: #fffef7;
+  border-radius: 2px;
   padding: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 1px dashed #c8a97e;
+  box-shadow: 2px 2px 6px rgba(62, 39, 35, 0.08);
 }
 
 .list-header {
@@ -108,20 +119,22 @@ table {
 }
 
 th {
-  background-color: #f0f0f0;
+  background-color: #f5edd8;
   padding: 10px 12px;
   text-align: left;
   font-size: 14px;
-  color: #555;
-  border-bottom: 2px solid #ddd;
+  color: #5c4033;
+  border-bottom: 2px dashed #c8a97e;
+  letter-spacing: 0.03em;
 }
 
 td {
   padding: 10px 12px;
   font-size: 14px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px dashed #e8d5b7;
   vertical-align: middle;
   white-space: nowrap;
+  color: #3e2723;
 }
 
 /* タイトル列は折り返して表示する */
@@ -144,8 +157,9 @@ tr:last-child td {
 
 .empty-message {
   text-align: center;
-  color: #999;
+  color: #a1887f;
   padding: 24px;
+  font-style: italic;
 }
 
 /* ページネーション */
@@ -159,7 +173,8 @@ tr:last-child td {
 
 .pagination-info {
   font-size: 14px;
-  color: #555;
+  color: #5c4033;
+  font-style: italic;
 }
 
 .pagination .btn:disabled {
@@ -174,13 +189,15 @@ tr:last-child td {
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 24px;
-  border-radius: 6px;
+  border-radius: 2px;
   font-size: 14px;
-  color: #fff;
+  font-family: Georgia, "Times New Roman", "游明朝", YuMincho, serif;
+  color: #fffef7;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
   z-index: 1000;
+  letter-spacing: 0.03em;
 }
 
 .toast.show {
@@ -188,43 +205,127 @@ tr:last-child td {
 }
 
 .toast-success {
-  background-color: #4caf50;
+  background-color: #6a8f5e;
+  border: 1px solid #4e7042;
 }
 
 .toast-error {
-  background-color: #e24a4a;
+  background-color: #a0522d;
+  border: 1px solid #7a3a1e;
 }
 
 /* ボタン */
 .btn {
   padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid #c8a97e;
+  border-radius: 2px;
   font-size: 14px;
+  font-family: Georgia, "Times New Roman", "游明朝", YuMincho, serif;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, background-color 0.2s;
+  letter-spacing: 0.04em;
 }
 
 .btn:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .btn-primary {
-  background-color: #4a90e2;
-  color: #fff;
+  background-color: #795548;
+  color: #fffef7;
+  border-color: #5d4037;
 }
 
 .btn-secondary {
-  background-color: #888;
-  color: #fff;
+  background-color: #efebe9;
+  color: #5c4033;
+  border-color: #a1887f;
 }
 
 .btn-edit {
-  background-color: #f0a500;
-  color: #fff;
+  background-color: #f5edd8;
+  color: #bf8c4c;
+  border: 1px dashed #bf8c4c;
 }
 
 .btn-delete {
-  background-color: #e24a4a;
-  color: #fff;
+  background-color: #f5edd8;
+  color: #a0522d;
+  border: 1px dashed #a0522d;
+}
+
+/* ログイン・登録画面 */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fdf6e3;
+}
+
+.auth-card {
+  background: #fffef7;
+  border-radius: 2px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px dashed #c8a97e;
+  box-shadow: 3px 3px 8px rgba(62, 39, 35, 0.1);
+}
+
+.auth-card h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #3e2723;
+  letter-spacing: 0.08em;
+}
+
+.auth-tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 1px dashed #c8a97e;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-family: Georgia, "Times New Roman", "游明朝", YuMincho, serif;
+  cursor: pointer;
+  color: #a1887f;
+  transition: color 0.2s;
+  letter-spacing: 0.03em;
+}
+
+.auth-tab.active {
+  color: #795548;
+  border-bottom: 2px solid #795548;
+  margin-bottom: -2px;
+  font-weight: bold;
+}
+
+.auth-error {
+  color: #a0522d;
+  font-size: 13px;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 15px;
+}
+
+/* アプリヘッダー（メモ画面） */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #c8a97e;
 }
