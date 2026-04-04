@@ -42,6 +42,23 @@ async def get_memos(
         raise HTTPException(status_code=500, detail="メモ一覧の取得に失敗しました")
 
 
+@router.get("/all", response_model=PaginatedMemoSchema)
+async def get_all_memos(
+    order: str = Query("desc", pattern="^(asc|desc)$"),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(10, ge=1, le=100),
+    session: AsyncSession = Depends(db.get_db),
+    # ログイン必須にする（未ログインでURLを直打ちしてもデータを返さない）
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        result = await memo_crud.get_all_memos(session, order, page, per_page)
+        return result
+    except Exception as e:
+        print(f"全件取得に失敗しました: {e}")
+        raise HTTPException(status_code=500, detail="メモ一覧の取得に失敗しました")
+
+
 @router.get("/{memo_id}", response_model=MemoSchema)
 async def get_memo_by_id(
     memo_id: int,

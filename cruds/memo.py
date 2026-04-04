@@ -67,6 +67,30 @@ async def get_memos(session: AsyncSession, user_id: int, order: str = "desc", pa
     )
 
 
+async def get_all_memos(session: AsyncSession, order: str = "desc", page: int = 1, per_page: int = 10) -> PaginatedMemoSchema:
+    """全ユーザーのメモをページネーション付きで取得する（管理者画面用）。
+    user_idによる絞り込みを行わない点がget_memosと異なる"""
+    sort_order = asc(Memo.created_at) if order == "asc" else desc(Memo.created_at)
+
+    total = (await session.execute(
+        select(func.count()).select_from(Memo)
+    )).scalar()
+
+    offset = (page - 1) * per_page
+    result = await session.execute(
+        select(Memo).order_by(sort_order).offset(offset).limit(per_page)
+    )
+    memos = result.scalars().all()
+
+    return PaginatedMemoSchema(
+        items=[_to_schema(memo) for memo in memos],
+        total=total,
+        page=page,
+        per_page=per_page,
+        total_pages=math.ceil(total / per_page) if total > 0 else 1,
+    )
+
+
 async def get_memo_by_id(session: AsyncSession, memo_id: int, user_id: int) -> MemoSchema:
     """IDで自分のメモを1件取得する"""
     memo = await _get_memo_or_404(session, memo_id, user_id)
