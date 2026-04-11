@@ -23,7 +23,7 @@ app = FastAPI(lifespan=lifespan)
 # フロントエンド（Vite開発サーバー）からのリクエストを許可する
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "https://main.d396l5gz9yaicy.amplifyapp.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
