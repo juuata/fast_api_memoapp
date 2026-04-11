@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const apiUrl = "http://localhost:8000/memos/all";
+const apiUrl = "http://13.231.214.36:8000/memos/all";
 
 // Authorizationヘッダーを作るヘルパー関数
 const authHeaders = () => ({
