@@ -145,14 +145,25 @@ docker compose down -v
 
 ## 本番デプロイ構成
 
-```
-[ブラウザ]
-    ↓ HTTPS
-[AWS Amplify] ← Reactフロントエンド（静的ホスティング）
-    ↓ HTTPS
-[Render] ← FastAPIバックエンド（自動HTTPS）
-    ↓
-[Render PostgreSQL] ← マネージドDB
+```mermaid
+flowchart TD
+    Browser["ブラウザ"]
+
+    subgraph Amplify["AWS Amplify（フロントエンド）"]
+        FE["React 19 / Vite 8\nJavaScript\n静的ホスティング"]
+    end
+
+    subgraph RenderService["Render（バックエンド）"]
+        BE["FastAPI 0.135 / Uvicorn\nPython\nJWT認証 / REST API"]
+    end
+
+    subgraph RenderDB["Render（データベース）"]
+        DB[("PostgreSQL 16\nSQLAlchemy 2.0\nPydantic 2")]
+    end
+
+    Browser -->|"HTTPS"| Amplify
+    Amplify -->|"HTTPS / REST API"| RenderService
+    RenderService -->|"SQL（非同期）"| RenderDB
 ```
 
 | サービス | URL |
@@ -169,14 +180,28 @@ ECS Fargate + RDS PostgreSQL によるバックエンド構成も検証・動作
 AmplifyはHTTPS必須のため、ECS（HTTP）との組み合わせではMixed Contentエラーが発生する。
 ALB + ACM + Route 53による独自ドメイン＆HTTPS化で解決可能。
 
-```
-[ブラウザ]
-    ↓ HTTPS
-[AWS Amplify] ← Reactフロントエンド
-    ↓ HTTPS（ALB + ACM で実現）
-[Amazon ECS Fargate] ← FastAPIバックエンド
-    ↓
-[Amazon RDS PostgreSQL] ← マネージドDB（東京リージョン）
+```mermaid
+flowchart TD
+    Browser["ブラウザ"]
+
+    subgraph Amplify["AWS Amplify（フロントエンド）"]
+        FE["React 19 / Vite 8\nJavaScript"]
+    end
+
+    subgraph ECS["Amazon ECS Fargate（バックエンド）"]
+        BE["FastAPI / Python\nDockerコンテナ"]
+    end
+
+    subgraph RDS["Amazon RDS（データベース）"]
+        DB[("PostgreSQL 16\n東京リージョン")]
+    end
+
+    ALB["ALB + ACM\n（HTTPS化 / 今後の課題）"]
+
+    Browser -->|"HTTPS"| Amplify
+    Amplify -->|"HTTPS"| ALB
+    ALB --> ECS
+    ECS -->|"SQL"| RDS
 ```
 
 ---
