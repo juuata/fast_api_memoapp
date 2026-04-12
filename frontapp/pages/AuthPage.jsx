@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_BASE = "http://13.231.214.36:8000";
+const API_BASE = "https://memoapp-backend-w2zt.onrender.com";
 
 // ログイン・ユーザー登録画面
 // onLogin(token) が呼ばれると App.jsx 側でログイン状態に切り替わる

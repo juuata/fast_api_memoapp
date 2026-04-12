@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const API_BASE = "http://13.231.214.36:8000";
+const API_BASE = "https://memoapp-backend-w2zt.onrender.com";
 const apiUrl = `${API_BASE}/memos`;
 
 // localStorageからトークンを取得してAuthorizationヘッダーを作るヘルパー関数
